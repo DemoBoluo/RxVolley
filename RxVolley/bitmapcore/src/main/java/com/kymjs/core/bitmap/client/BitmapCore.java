@@ -29,24 +29,17 @@ import com.kymjs.core.bitmap.DiskImageDisplayer;
 import com.kymjs.core.bitmap.ImageBale;
 import com.kymjs.core.bitmap.ImageDisplayer;
 import com.kymjs.core.bitmap.interf.IBitmapCache;
-import com.kymjs.core.bitmap.toolbox.CreateBitmap;
 import com.kymjs.core.bitmap.toolbox.DensityUtils;
 import com.kymjs.rxvolley.RxVolley;
 import com.kymjs.rxvolley.client.HttpCallback;
 import com.kymjs.rxvolley.http.RequestQueue;
 import com.kymjs.rxvolley.http.RetryPolicy;
-import com.kymjs.rxvolley.rx.Result;
-import com.kymjs.rxvolley.rx.RxBus;
 import com.kymjs.rxvolley.toolbox.Loger;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import rx.Observable;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 /**
  * 入口类
@@ -320,31 +313,6 @@ public final class BitmapCore {
                         if (callback != null) callback.onSuccess(headers, bitmap);
                     }
                 };
-        }
-
-        public Observable<Bitmap> getResult() {
-            doTask();
-            return RxBus.getDefault().take(Result.class)
-                    .filter(new Func1<Result, Boolean>() {
-                        @Override
-                        public Boolean call(Result result) {
-                            return result != null;
-                        }
-                    })
-                    .filter(new Func1<Result, Boolean>() {
-                        @Override
-                        public Boolean call(Result result) {
-                            return config.mUrl.equals(result.url);
-                        }
-                    })
-                    .map(new Func1<Result, Bitmap>() {
-                        @Override
-                        public Bitmap call(Result result) {
-                            return CreateBitmap.create(result.data, config.maxWidth, config.maxHeight);
-                        }
-                    })
-                    .take(1)
-                    .subscribeOn(Schedulers.io());
         }
 
         public void doTask() {

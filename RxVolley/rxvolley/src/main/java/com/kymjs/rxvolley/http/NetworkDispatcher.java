@@ -24,8 +24,6 @@ import android.os.Process;
 import com.kymjs.rxvolley.interf.ICache;
 import com.kymjs.rxvolley.interf.IDelivery;
 import com.kymjs.rxvolley.interf.INetwork;
-import com.kymjs.rxvolley.rx.Result;
-import com.kymjs.rxvolley.rx.RxBus;
 import com.kymjs.rxvolley.toolbox.Loger;
 
 import java.util.concurrent.BlockingQueue;
@@ -41,7 +39,6 @@ public class NetworkDispatcher extends Thread {
     private final INetwork mNetwork; // 网络请求执行器
     private final ICache mCache; // 缓存器
     private final IDelivery mDelivery;
-    private final RxBus mPoster;
     private volatile boolean mQuit = false; // 标记是否退出本线程
 
     public NetworkDispatcher(BlockingQueue<Request<?>> queue, INetwork network, ICache cache,
@@ -50,7 +47,6 @@ public class NetworkDispatcher extends Thread {
         mNetwork = network;
         mCache = cache;
         mDelivery = delivery;
-        mPoster = RxBus.getDefault();
     }
 
     /**
@@ -109,8 +105,6 @@ public class NetworkDispatcher extends Thread {
                     if (request.getCallback() != null) {
                         request.getCallback().onSuccessInAsync(networkResponse.data);
                     }
-                    mPoster.post(new Result(request.getUrl(),
-                            networkResponse.headers, networkResponse.data));
                 }
                 mDelivery.postResponse(request, response);
             } catch (VolleyError volleyError) {

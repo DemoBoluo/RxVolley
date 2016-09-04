@@ -30,14 +30,9 @@ import com.kymjs.rxvolley.http.Request;
 import com.kymjs.rxvolley.http.RequestQueue;
 import com.kymjs.rxvolley.http.RetryPolicy;
 import com.kymjs.rxvolley.interf.ICache;
-import com.kymjs.rxvolley.rx.Result;
-import com.kymjs.rxvolley.rx.RxBus;
 import com.kymjs.rxvolley.toolbox.FileUtils;
 
 import java.io.File;
-
-import rx.Observable;
-import rx.functions.Func1;
 
 /**
  * 主入口
@@ -280,21 +275,6 @@ public class RxVolley {
                 callback.onPreStart();
             }
             return this;
-        }
-
-        /**
-         * 执行请求任务,并返回一个RxJava的Observable类型
-         */
-        public Observable<Result> getResult() {
-            doTask();
-            return RxBus.getDefault().take(Result.class)
-                    .filter(new Func1<Result, Boolean>() {
-                        @Override
-                        public Boolean call(Result result) {
-                            return httpConfig.mUrl.equals(result.url);
-                        }
-                    })
-                    .take(1);
         }
 
         /**

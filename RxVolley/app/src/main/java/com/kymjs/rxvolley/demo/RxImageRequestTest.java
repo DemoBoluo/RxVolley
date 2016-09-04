@@ -6,15 +6,10 @@ import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 
-import com.kymjs.core.bitmap.client.BitmapCore;
 import com.kymjs.rxvolley.client.HttpCallback;
 import com.kymjs.rxvolley.toolbox.Loger;
 
 import java.util.Map;
-
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 
 /**
  * Created by kymjs on 2/28/16.
@@ -45,8 +40,6 @@ public class RxImageRequestTest extends AppCompatActivity {
         setContentView(R.layout.activity_rxloadimage_test);
 
         setUp();
-
-        testBitmapLoader();
 
         tearDown();
     }
@@ -99,78 +92,6 @@ public class RxImageRequestTest extends AppCompatActivity {
                         ().getThread()));
             }
         };
-    }
-
-    private void testBitmapLoader() {
-        new BitmapCore.Builder()
-                .view(imageView1)
-                .url(datas_link[1])
-                .callback(callback)
-                .getResult()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Bitmap>() {
-                    @Override
-                    public void onCompleted() {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                    }
-
-                    @Override
-                    public void onNext(Bitmap bitmap) {
-                        imageView1.setImageBitmap(bitmap);
-                    }
-                });
-        new BitmapCore.Builder()
-                .callback(callback)
-                .url(datas_link[2])
-                .getResult()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        Loger.debug("=====再次设置2");
-                        imageView2.setImageBitmap(bitmap);
-                    }
-                });
-        new BitmapCore.Builder()
-                .url(datas_link[3])
-                .getResult()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        Loger.debug("=====再次设置3");
-                        imageView3.setImageBitmap(bitmap);
-                    }
-                });
-        new BitmapCore.Builder()
-                .url(datas_link[4])
-                .callback(callback)
-                .getResult()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        Loger.debug("=====再次设置4");
-                        imageView4.setImageBitmap(bitmap);
-                    }
-                });
-        new BitmapCore.Builder()
-                .view(imageView5)
-                .url(datas_link[0])
-                .callback(callback)
-                .getResult()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Bitmap>() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        Loger.debug("=====再次设置5");
-                        imageView5.setImageBitmap(bitmap);
-                    }
-                });
-
     }
 
     private void tearDown() {

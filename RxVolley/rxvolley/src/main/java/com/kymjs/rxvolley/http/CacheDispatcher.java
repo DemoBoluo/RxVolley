@@ -20,8 +20,6 @@ import android.os.Process;
 import com.kymjs.rxvolley.interf.ICache;
 import com.kymjs.rxvolley.interf.IDelivery;
 import com.kymjs.rxvolley.interf.IPersistence;
-import com.kymjs.rxvolley.rx.Result;
-import com.kymjs.rxvolley.rx.RxBus;
 import com.kymjs.rxvolley.toolbox.Loger;
 
 import java.util.concurrent.BlockingQueue;
@@ -43,7 +41,6 @@ public class CacheDispatcher extends Thread {
     private final BlockingQueue<Request<?>> mNetworkQueue; // 用于执行网络请求的工作队列
     private final ICache mCache; // 缓存器
     private final IDelivery mDelivery; // 分发器
-    private final RxBus mPoster;
 
     private volatile boolean mQuit = false;
 
@@ -59,7 +56,6 @@ public class CacheDispatcher extends Thread {
         mNetworkQueue = networkQueue;
         mCache = cache;
         mDelivery = delivery;
-        mPoster = RxBus.getDefault();
     }
 
     /**
@@ -102,7 +98,6 @@ public class CacheDispatcher extends Thread {
                 // 从缓存返回数据
                 Response<?> response = request.parseNetworkResponse(new NetworkResponse(entry.data,
                         entry.responseHeaders));
-                mPoster.post(new Result(request.getUrl(), entry.responseHeaders, entry.data));
 
                 Loger.debug("CacheDispatcher：http resopnd from cache");
                 sleep(request.getConfig().mDelayTime);
